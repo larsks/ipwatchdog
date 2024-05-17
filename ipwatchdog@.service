@@ -1,0 +1,14 @@
+[Unit]
+Description=Trigger a reboot if interface %i loses ipv4 address
+Wants=network.target
+After=network.target
+
+[Service]
+Type=exec
+EnvironmentFile=-/etc/default/ipwatchdog
+EnvironmentFile=-/etc/default/ipwatchdog-%i
+ExecStartPre=/bin/sh -c 'while ! test -d /sys/class/net/%i; do sleep 1; done'
+ExecStart=/bin/bash /usr/local/sbin/ipwatchdog.sh %i
+
+[Install]
+WantedBy=default.target
